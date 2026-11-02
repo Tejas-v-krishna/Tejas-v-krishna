@@ -2,18 +2,20 @@
   <img src="assets/hero.gif" alt="Close-up of a halftone eye that looks left, right, then blinks" width="100%" />
 </div>
 
-<h1 align="center">Hi 👋, I'm Tejas</h1>
-
-<h3 align="center">Full-Stack Developer &amp; UI/UX Designer</h3>
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/profile-card-dark.svg" />
+    <source media="(prefers-color-scheme: light)" srcset="assets/profile-card-light.svg" />
+    <img src="assets/profile-card-dark.svg" alt="Profile card for Tejas: full-stack developer and UI/UX designer, with recent work, services, tools and a contact call to action" width="100%" />
+  </picture>
+</div>
 
 <p align="center">
-  Building performant, design-driven digital experiences with clean architecture and a sharp eye for detail.
-</p>
-
-<p align="center">
-  <code>B.Tech CSE @ LPU</code> &nbsp;·&nbsp;
-  <code>Google UX Design Certified</code> &nbsp;·&nbsp;
-  <code>Design systems &amp; AI products</code>
+  <sub>
+    <a href="mailto:tejaskrishna2018@gmail.com">Send a message</a> &nbsp;·&nbsp;
+    <a href="https://github.com/Tejas-v-krishna">GitHub</a> &nbsp;·&nbsp;
+    <a href="https://www.linkedin.com/in/tejas-v-krishna/">LinkedIn</a>
+  </sub>
 </p>
 
 ---

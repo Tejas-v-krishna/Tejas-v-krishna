@@ -73,14 +73,16 @@ python -m pip install pillow
 ```
 
 and ffmpeg on PATH.
+- Profile card: `scripts/build_profile_card.py` writes `assets/profile-card-dark.svg` and `assets/profile-card-light.svg` from `assets/avatar.png`. Edit the copy or layout there, not in the SVG files.
 - Stats card layout: `scripts/update_stats.py` (`render_stats`).
 - Activity graph layout: `scripts/update_stats.py` (`render_activity`).
 
-Rebuild the artwork after editing `build_assets.py` or `build_hero_gif.py`:
+Rebuild the artwork after editing `build_assets.py`, `build_hero_gif.py` or `build_profile_card.py`:
 
 ```powershell
 python scripts/build_assets.py
 python scripts/build_hero_gif.py
+python scripts/build_profile_card.py
 ```
 
 The scripts need Pillow and numpy:
