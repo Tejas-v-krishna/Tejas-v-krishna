@@ -3,16 +3,15 @@
 Run from the repository root:
     python scripts/build_hero_gif.py
 
-Source clip: assets/source/eye-blink.mp4 (a short, loop-friendly clip of the
-halftone eye looking around and blinking). Frames are extracted with ffmpeg,
-converted to the profile's two-colour palette, and written as an animated GIF.
+Source clip: assets/source/eye-blink.mp4 (a clip of the halftone eye looking
+around and blinking). Frames are extracted with ffmpeg, converted to the
+profile's two-colour palette, and written as a seamless ping-pong GIF.
 """
 
 from __future__ import annotations
 
 import glob
 import os
-import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -46,14 +45,18 @@ def extract_frames() -> list[str]:
 
 def main() -> None:
     files = extract_frames()
-    frames = []
+    raw = []
     for f in files:
         img = Image.open(f).convert("L")
         if img.size != (960, 540):
             img = img.resize((960, 540), Image.Resampling.LANCZOS)
         arr = np.asarray(img, dtype=np.float32)
         dots = np.where(arr >= 128, 255, 0).astype(np.uint8)
-        frames.append(ImageOps.colorize(Image.fromarray(dots, "L"), black=BG, white=INK))
+        raw.append(ImageOps.colorize(Image.fromarray(dots, "L"), black=BG, white=INK))
+
+    # Ping-pong: play forward then reversed (excluding the duplicated endpoints)
+    # so the loop is seamless.
+    frames = raw + raw[-2:0:-1]
 
     qframes = [f.quantize(colors=2, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE) for f in frames]
     qframes[0].save(
