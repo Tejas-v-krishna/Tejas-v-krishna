@@ -54,7 +54,8 @@ python scripts/update_stats.py
 The README cannot set these through the API, so do them in GitHub's UI:
 
 - **Profile photo** — upload `assets/avatar.png` if you want the matching dithered astronaut portrait. You can also use your own high-contrast photo.
-- **Bio** — for example: `Full-stack developer & UI/UX designer. Building design-driven products with React, TypeScript, and Node.js.`
+- **Bio** — paste: `Full-stack developer & UI/UX designer. Building performant, design-driven products with React, TypeScript, and Node.js.`
+  (The GitHub CLI token needs the `user` scope to change this via API. If you want to set it from the terminal, run `gh auth refresh -h github.com -s user` first.)
 - **Location** — add your city/country if you want it shown.
 - **Website** — link your portfolio.
 - **Pinned repositories** — pin `usesawn`, `flowdesk`, `figma-design-system-plugin`, and your portfolio.
