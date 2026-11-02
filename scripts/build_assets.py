@@ -15,11 +15,13 @@ from pathlib import Path
 
 from PIL import Image, ImageFilter, ImageOps
 
+import subprocess
+import tempfile
+
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
 CACHE = ASSETS / ".cache"
-
-EYE_SOURCE = ASSETS / "source" / "eye.png"
+SOURCE_VIDEO = ASSETS / "source" / "eye-blink.mp4"
 ASTRONAUT_URL = (
     "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/"
     "STS41B-35-1613_-_Bruce_McCandless_II_during_EVA_%28Retouched%29_%28cropped%29.jpg/"
@@ -36,6 +38,18 @@ BAYER_4 = [
     [3, 11, 1, 9],
     [15, 7, 13, 5],
 ]
+
+
+def extract_first_frame(video: Path) -> Path:
+    """Extract the first frame of `video` into the cache (ignoring the result if cached)."""
+    CACHE.mkdir(parents=True, exist_ok=True)
+    out = CACHE / "eye-frame.png"
+    if not out.exists():
+        subprocess.run(
+            ["ffmpeg", "-v", "error", "-y", "-i", str(video), "-frames:v", "1", str(out)],
+            check=True,
+        )
+    return out
 
 
 def download(url: str, path: Path) -> Path:
@@ -76,7 +90,7 @@ def fit_cover(image: Image.Image, size: tuple[int, int]) -> Image.Image:
 
 def build_hero() -> None:
     """Render the dithered eye as the README banner."""
-    image = Image.open(EYE_SOURCE).convert("L")
+    image = Image.open(extract_first_frame(SOURCE_VIDEO)).convert("L")
 
     # Upscale before thresholding so the halftone dots stay crisp when GitHub
     # stretches the banner to the width of the README.
