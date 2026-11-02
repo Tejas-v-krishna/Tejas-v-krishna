@@ -66,18 +66,19 @@ The README cannot set these through the API, so do them in GitHub's UI:
 - Links and email: `README.md`.
 - Bio, about copy, and featured projects: `README.md`.
 - Tech stack: change the `i=` list in the Skill Icons URL in `README.md`.
-- Hero and astronaut images: `scripts/build_assets.py`.
+- Hero images: `assets/source/eye.png`, `scripts/build_assets.py` (still) and `scripts/build_hero_gif.py` (blink).
 - Stats card layout: `scripts/update_stats.py` (`render_stats`).
 - Activity graph layout: `scripts/update_stats.py` (`render_activity`).
 
-Rebuild the artwork after editing `build_assets.py`:
+Rebuild the artwork after editing `build_assets.py` or `build_hero_gif.py`:
 
 ```powershell
 python scripts/build_assets.py
+python scripts/build_hero_gif.py
 ```
 
-The script needs Pillow:
+The scripts need Pillow and numpy:
 
 ```powershell
-python -m pip install pillow
+python -m pip install pillow numpy
 ```
