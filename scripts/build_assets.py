@@ -146,6 +146,20 @@ def build_hero() -> None:
     print("Wrote assets/hero.png")
 
 
+def build_avatar() -> None:
+    source = download(ASTRONAUT_URL, CACHE / "mccandless.jpg")
+    image = Image.open(source).convert("RGB")
+
+    # A tight, high-contrast crop of the helmet for the profile photo.
+    crop = image.crop((700, 200, 960, 460))
+    gray = ImageOps.autocontrast(ImageOps.grayscale(crop), cutoff=1)
+    dots = bayer_dither(gray, scale=2).convert("L").resize((400, 400), Image.Resampling.LANCZOS)
+    avatar = Image.new("RGB", (400, 400), BG)
+    avatar.paste(INK, (0, 0), dots)
+    avatar.save(ASSETS / "avatar.png", optimize=True)
+    print("Wrote assets/avatar.png")
+
+
 def build_astronaut() -> None:
     source = download(ASTRONAUT_URL, CACHE / "mccandless.jpg")
     image = Image.open(source).convert("RGB")
@@ -169,3 +183,4 @@ if __name__ == "__main__":
     ASSETS.mkdir(parents=True, exist_ok=True)
     build_hero()
     build_astronaut()
+    build_avatar()

@@ -53,7 +53,7 @@ python scripts/update_stats.py
 
 The README cannot set these through the API, so do them in GitHub's UI:
 
-- **Profile photo** — use a high-contrast portrait or a custom monogram. The reference screenshot uses a dark, grainy avatar.
+- **Profile photo** — upload `assets/avatar.png` if you want the matching dithered astronaut portrait. You can also use your own high-contrast photo.
 - **Bio** — for example: `Full-stack developer & UI/UX designer. Building design-driven products with React, TypeScript, and Node.js.`
 - **Location** — add your city/country if you want it shown.
 - **Website** — link your portfolio.
