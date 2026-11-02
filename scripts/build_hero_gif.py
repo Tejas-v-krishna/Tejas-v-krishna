@@ -1,12 +1,11 @@
-"""Build the animated blink of the hero eye.
+"""Build the animated hero eye: looks left, looks right, then blinks.
 
 Run from the repository root:
     python scripts/build_hero_gif.py
 
-The source is a single dithered still, so the blink is built by squashing the
-eye opening toward the lid line and sliding a textured lid (with the artwork's
-real lashes) down over it. The lid pattern is anchored to the moving margin,
-so it travels with the eyelid instead of sitting there like a static layer.
+The source is a single dithered still. The gaze shift moves the artwork's iris
+across the sclera, and the blink squashes the eye opening toward the lid line
+while a moving lid (with the artwork's real lashes) slides over it.
 """
 
 from __future__ import annotations
@@ -32,12 +31,14 @@ ANCHOR_TOP = [195, 180, 142, 115, 100, 88, 79, 73, 72, 72, 73, 77, 87, 99, 126, 
 ANCHOR_BOTTOM = [195, 218, 223, 231, 239, 243, 244, 244, 243, 241, 237, 232, 227, 217, 201, 178, 175]
 CLOSE_AT = 0.72  # where the lids meet, as a fraction of the opening height
 
+# Iris, measured on the upscaled artwork.
+IRIS_X, IRIS_Y, IRIS_R = 480.0, 270.0, 110.0
+GAZE = 40.0  # horizontal travel of the pupil, in output pixels
+
 # Blink timing, in frames at FPS.
-HOLD_OPEN_A = 25
 CLOSING = 5
 HOLD_CLOSED = 1
 OPENING = 5
-HOLD_OPEN_B = 25
 
 
 def smoothstep(t: float) -> float:
@@ -69,8 +70,38 @@ def eye_curves(width: int, scale: float) -> tuple[np.ndarray, np.ndarray, np.nda
     return top, bottom, closed_line, active
 
 
-def render(gray: np.ndarray, top: np.ndarray, bottom: np.ndarray, closed_line: np.ndarray,
-           active: np.ndarray, noise: np.ndarray, p: float) -> Image.Image:
+def prepare_iris(gray: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray, int]:
+    """Cut the iris out and fill the sclera behind it, so it can slide around."""
+    height, width = gray.shape
+    pad = 4
+    radius = int(IRIS_R + pad)
+    x0 = int(round(IRIS_X)) - radius
+    y0 = int(round(IRIS_Y)) - radius
+    sprite = gray[y0:y0 + 2 * radius, x0:x0 + 2 * radius].copy()
+
+    yy, xx = np.mgrid[0:2 * radius, 0:2 * radius]
+    dist = np.hypot(xx - radius + 0.5, yy - radius + 0.5)
+    alpha = np.clip((IRIS_R + 1.5 - dist) / 3.0, 0, 1).astype(np.float32)
+
+    base = gray.copy()
+    yy2, xx2 = np.mgrid[0:height, 0:width]
+    inside = np.hypot(xx2 - IRIS_X, yy2 - IRIS_Y) <= IRIS_R + 3
+    base[inside] = 255.0
+    return base, sprite, alpha, radius
+
+
+def compose_gaze(base: np.ndarray, sprite: np.ndarray, alpha: np.ndarray, radius: int,
+                 dx: float) -> np.ndarray:
+    out = base.copy()
+    px = int(round(IRIS_X + dx)) - radius
+    py = int(round(IRIS_Y)) - radius
+    region = out[py:py + 2 * radius, px:px + 2 * radius]
+    out[py:py + 2 * radius, px:px + 2 * radius] = region * (1 - alpha) + sprite * alpha
+    return out
+
+
+def blink(gray: np.ndarray, top: np.ndarray, bottom: np.ndarray, closed_line: np.ndarray,
+          active: np.ndarray, noise: np.ndarray, p: float) -> Image.Image:
     height, width = gray.shape
     out = gray.copy()
     ys = np.arange(height, dtype=np.float32)
@@ -126,28 +157,48 @@ def render(gray: np.ndarray, top: np.ndarray, bottom: np.ndarray, closed_line: n
     return ImageOps.colorize(Image.fromarray(dots, "L"), black=BG, white=INK)
 
 
-def schedule() -> list[float]:
-    values = [0.0] * HOLD_OPEN_A
-    values += [smoothstep(i / (CLOSING - 1)) for i in range(CLOSING)]
-    values += [1.0] * HOLD_CLOSED
-    values += [smoothstep(1.0 - i / (OPENING - 1)) for i in range(OPENING)]
-    values += [0.0] * HOLD_OPEN_B
-    return values
+def schedule() -> list[tuple[float, float]]:
+    """(gaze offset, blink amount) per frame."""
+    states: list[tuple[float, float]] = []
+
+    def hold(count: int, dx: float) -> None:
+        states.extend([(dx, 0.0)] * count)
+
+    def move(count: int, start: float, end: float) -> None:
+        states.extend(
+            [(start + (end - start) * smoothstep(i / (count - 1)), 0.0) for i in range(count)]
+        )
+
+    hold(14, 0.0)
+    move(6, 0.0, -GAZE)
+    hold(18, -GAZE)
+    move(12, -GAZE, GAZE)
+    hold(18, GAZE)
+    move(6, GAZE, 0.0)
+    hold(8, 0.0)
+
+    states.extend([(0.0, smoothstep(i / (CLOSING - 1))) for i in range(CLOSING)])
+    states.extend([(0.0, 1.0)] * HOLD_CLOSED)
+    states.extend([(0.0, smoothstep(1.0 - i / (OPENING - 1))) for i in range(OPENING)])
+
+    hold(14, 0.0)
+    return states
 
 
 def main() -> None:
     gray, scale = load_eye()
     top, bottom, closed_line, active = eye_curves(gray.shape[1], scale)
+    base, sprite, alpha, radius = prepare_iris(gray)
 
     rng = np.random.default_rng(5)
     noise = rng.random(gray.shape).astype(np.float32)
 
-    frames = [
-        render(gray, top, bottom, closed_line, active, noise, p).quantize(
+    frames = []
+    for dx, p in schedule():
+        view = compose_gaze(base, sprite, alpha, radius, dx)
+        frames.append(blink(view, top, bottom, closed_line, active, noise, p).quantize(
             colors=2, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE
-        )
-        for p in schedule()
-    ]
+        ))
 
     out = ASSETS / "hero.gif"
     frames[0].save(
@@ -162,9 +213,12 @@ def main() -> None:
     print(f"Wrote {out} ({gray.shape[1]}x{gray.shape[0]}, {len(frames)} frames, {out.stat().st_size / 1024:.0f} KB)")
 
     ASSETS.joinpath(".cache").mkdir(exist_ok=True)
-    sheet = Image.new("RGB", (gray.shape[1] * 3, gray.shape[0]), BG)
-    for i, p in enumerate((0.0, 0.5, 1.0)):
-        sheet.paste(render(gray, top, bottom, closed_line, active, noise, p), (i * gray.shape[1], 0))
+    sheet = Image.new("RGB", (gray.shape[1] * 4, gray.shape[0]), BG)
+    for i, dx in enumerate((-GAZE, 0.0, GAZE)):
+        view = compose_gaze(base, sprite, alpha, radius, dx)
+        sheet.paste(blink(view, top, bottom, closed_line, active, noise, 0.0), (i * gray.shape[1], 0))
+    view = compose_gaze(base, sprite, alpha, radius, 0.0)
+    sheet.paste(blink(view, top, bottom, closed_line, active, noise, 1.0), (3 * gray.shape[1], 0))
     sheet.save(ASSETS / ".cache" / "hero-blink-sheet.png")
 
 

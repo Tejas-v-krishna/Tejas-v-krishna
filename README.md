@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/hero.gif" alt="Close-up of a blinking eye rendered in black-and-white halftone dither" width="100%" />
+  <img src="assets/hero.gif" alt="Close-up of a halftone eye that looks left, right, then blinks" width="100%" />
 </div>
 
 <h1 align="center">Hi 👋, I'm Tejas</h1>
