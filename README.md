@@ -3,11 +3,15 @@
 </div>
 
 <div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/profile-card-dark.svg" />
-    <source media="(prefers-color-scheme: light)" srcset="assets/profile-card-light.svg" />
-    <img src="assets/profile-card-dark.svg" alt="Profile card for Tejas: full-stack developer and UI/UX designer, with recent work, services, tools and a contact call to action" width="100%" />
-  </picture>
+  <a href="mailto:tejaskrishna2018@gmail.com" title="Send Tejas a message">
+    <picture>
+      <source media="(max-width: 760px) and (prefers-color-scheme: dark)" srcset="assets/profile-card-mobile-dark.svg" />
+      <source media="(max-width: 760px) and (prefers-color-scheme: light)" srcset="assets/profile-card-mobile-light.svg" />
+      <source media="(prefers-color-scheme: dark)" srcset="assets/profile-card-dark.svg" />
+      <source media="(prefers-color-scheme: light)" srcset="assets/profile-card-light.svg" />
+      <img src="assets/profile-card-dark.svg" alt="Profile card for Tejas: full-stack developer and UI/UX designer, with recent work, services, tools and a contact call to action" width="100%" />
+    </picture>
+  </a>
 </div>
 
 <p align="center">

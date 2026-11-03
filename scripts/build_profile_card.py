@@ -4,10 +4,18 @@ The card is a single SVG because GitHub sanitises READMEs: no custom CSS, no
 layout, no hover states. Everything visual therefore lives in the image, while
 the real, clickable links stay in the markdown below it.
 
-Two variants are emitted so the card follows the reader's theme:
+Four variants are emitted so the card follows the reader's theme *and* screen
+size. The README picks between them with `<source media>` queries, which GitHub
+keeps in the sanitised HTML:
 
-    assets/profile-card-dark.svg
-    assets/profile-card-light.svg
+    assets/profile-card-dark.svg            wide, 900 x 1010
+    assets/profile-card-light.svg           wide, 900 x 1010
+    assets/profile-card-mobile-dark.svg     portrait, 720 x 1712
+    assets/profile-card-mobile-light.svg    portrait, 720 x 1712
+
+The wide card is the desktop design. At phone width it scales down to a ~360px
+thumbnail and its text becomes unreadable, so the portrait card reflows the same
+content into one column with type that still holds up at 360px.
 
 Run from the repository root:
 
@@ -27,8 +35,11 @@ ASSETS = ROOT / "assets"
 AVATAR = ASSETS / "avatar.png"
 OUT_DARK = ASSETS / "profile-card-dark.svg"
 OUT_LIGHT = ASSETS / "profile-card-light.svg"
+OUT_MOBILE_DARK = ASSETS / "profile-card-mobile-dark.svg"
+OUT_MOBILE_LIGHT = ASSETS / "profile-card-mobile-light.svg"
 
 W, H = 900, 1010
+MW, MH = 720, 1712
 FONT = (
     "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, "
     "Helvetica, Arial, sans-serif"
@@ -468,12 +479,176 @@ def build(theme_name: str) -> str:
     return "\n".join(parts)
 
 
+def pill_m(cx: float, cy: float, w: float, label: str, rot: float, t: dict) -> str:
+    """A services pill sized for the portrait card (larger than the wide one)."""
+    h = 46
+    return (
+        f'<g transform="translate({cx} {cy}) rotate({rot})">'
+        f'<rect x="{-w / 2:.1f}" y="{-h / 2}" width="{w}" height="{h}" rx="{h / 2}" '
+        'fill="url(#glass)" stroke="url(#edge)" stroke-width="1"/>'
+        + txt(0, 0, label, 22, t["ink"], 500, "middle", 0.1).replace(
+            "<text ", '<text dominant-baseline="middle" '
+        )
+        + "</g>"
+    )
+
+
+def build_mobile(theme_name: str) -> str:
+    """The portrait card shown on phones, where the wide card is unreadable."""
+    t = THEMES[theme_name]
+    avatar = avatar_data_uri()
+
+    parts: list[str] = []
+    parts.append(
+        f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
+        f'viewBox="0 0 {MW} {MH}" width="{MW}" height="{MH}" '
+        f'role="img" aria-labelledby="cardTitle cardDesc">'
+    )
+    parts.append(
+        '<title id="cardTitle">Tejas — Full-Stack Developer and UI/UX Designer</title>'
+        '<desc id="cardDesc">Profile card with recent work, services, tools and contact details.</desc>'
+    )
+
+    parts.append(
+        f"""
+  <defs>
+    <linearGradient id="glass" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0" stop-color="{t['glass1']}" stop-opacity="{t['glass1_op']}"/>
+      <stop offset="1" stop-color="{t['glass2']}" stop-opacity="{t['glass2_op']}"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="{t['edge1']}" stop-opacity="{t['edge1_op']}"/>
+      <stop offset="1" stop-color="{t['edge2']}" stop-opacity="{t['edge2_op']}"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="{t['glow']}" stop-opacity="{0.07 if theme_name == 'dark' else 0.85}"/>
+      <stop offset="1" stop-color="{t['glow']}" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="warm" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7aa2ff" stop-opacity="{0.18 if theme_name == 'dark' else 0.12}"/>
+      <stop offset="1" stop-color="#7aa2ff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+    <clipPath id="avatarClip"><rect x="572" y="64" width="104" height="104" rx="24"/></clipPath>
+    <clipPath id="clipA"><rect width="240" height="148" rx="14"/></clipPath>
+    <clipPath id="clipB"><rect width="240" height="148" rx="14"/></clipPath>
+    <clipPath id="clipC"><rect width="240" height="148" rx="14"/></clipPath>
+  </defs>
+"""
+    )
+
+    # ---- canvas ---------------------------------------------------------
+    parts.append(f'<rect width="{MW}" height="{MH}" rx="28" fill="{t["canvas"]}"/>')
+    parts.append(f'<rect width="{MW}" height="{MH}" rx="28" fill="url(#halo)"/>')
+    parts.append('<ellipse cx="560" cy="96" rx="230" ry="180" fill="url(#warm)"/>')
+
+    # ---- header ---------------------------------------------------------
+    parts.append(panel(32, 32, 512, 168))
+    parts.append(txt(64, 108, "Hey, I’m Tejas", 46, t["ink"], 600, spacing="-0.8"))
+    parts.append(txt(64, 146, "Full-Stack Developer", 26, t["muted"]))
+    parts.append(txt(64, 178, "&amp; UI/UX Designer", 26, t["muted"]))
+    parts.append(panel(560, 32, 128, 168))
+    parts.append(
+        f'<image x="572" y="64" width="104" height="104" clip-path="url(#avatarClip)" '
+        f'href="{avatar}" preserveAspectRatio="xMidYMid slice"/>'
+    )
+    parts.append(
+        '<rect x="572" y="64" width="104" height="104" rx="24" fill="none" '
+        f'stroke="{t["edge1"]}" stroke-opacity="0.35" stroke-width="1"/>'
+    )
+
+    # ---- social row -----------------------------------------------------
+    tile_w = (656 - 4 * 14) / 5
+    for i, name in enumerate(SOCIALS):
+        x = 32 + i * (tile_w + 14)
+        parts.append(panel(x, 228, tile_w, 112, 20))
+        parts.append(icon(name, x + tile_w / 2 - 19, 265, 38, t["icon"]))
+
+    # ---- recent works (one row per project) -----------------------------
+    parts.append(panel(32, 368, 656, 486))
+    parts.append(txt(64, 418, "Recent Works", 24, t["muted"], 500, spacing="0.2"))
+    parts.append(
+        f'<path d="M636 414l12-12m0 0h-9m9 0v9" fill="none" stroke="{t["muted"]}" '
+        'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'
+    )
+    works = [
+        ("Sawn", "AI code editor", t["accent_c"], work_sawn(t), "clipA"),
+        ("Flowdesk", "Productivity OS", t["accent_b"], work_flowdesk(t), "clipB"),
+        ("Figma DS", "Figma plugin", t["accent_a"], work_figma(t), "clipC"),
+    ]
+    for i, (label, note, accent, art, clip) in enumerate(works):
+        y = 446 + i * 116
+        parts.append(
+            f'<g transform="translate(64 {y}) scale(0.64)">'
+            f'<rect width="240" height="148" rx="14" fill="{t["thumb"]}"/>'
+            f'<g clip-path="url(#{clip})">{art}</g>'
+            f'<rect width="240" height="148" rx="14" fill="none" stroke="{t["thumb_edge"]}"/>'
+            "</g>"
+        )
+        parts.append(f'<circle cx="256" cy="{y + 38}" r="5" fill="{accent}"/>')
+        parts.append(txt(272, y + 46, label, 28, t["ink"], 600))
+        parts.append(txt(272, y + 76, note, 20, t["muted"]))
+        parts.append(
+            f'<path d="M628 {y + 40}l14-14m0 0h-10m10 0v10" fill="none" '
+            f'stroke="{t["faint"]}" stroke-width="1.8" stroke-linecap="round" '
+            'stroke-linejoin="round"/>'
+        )
+
+    # ---- services -------------------------------------------------------
+    parts.append(panel(32, 886, 656, 246))
+    parts.append(txt(64, 936, "Services", 24, t["muted"], 500, spacing="0.2"))
+    for cx, cy, w, label, rot in [
+        (147, 990, 150, "AI Products", -5),
+        (347, 990, 210, "Design Systems", 4),
+        (557, 990, 175, "UI/UX Design", -4),
+        (165, 1062, 150, "Full-Stack", 4),
+        (352, 1062, 185, "Figma Plugins", -4),
+        (547, 1062, 165, "Performance", 3),
+    ]:
+        parts.append(pill_m(cx, cy, w, label, rot, t))
+
+    # ---- tools ----------------------------------------------------------
+    parts.append(panel(32, 1168, 656, 214))
+    parts.append(txt(64, 1216, "Tools I use", 24, t["muted"], 500, spacing="0.2"))
+    for index, (key, label) in enumerate(TOOL_NAMES):
+        x = 42 + index * 108
+        y = 1240
+        parts.append(panel(x, y, 96, 96, 18))
+        parts.append(icon(key, x + 28, y + 22, 40, t["tools"][key]))
+        parts.append(txt(x + 48, y + 84, label, 20, t["muted"], 500, "middle"))
+
+    # ---- collab ---------------------------------------------------------
+    parts.append(panel(32, 1418, 656, 262))
+    parts.append(txt(64, 1498, "Let’s collab!", 44, t["ink"], 600, spacing="-0.5"))
+    parts.append(txt(64, 1540, "Let’s turn your idea into reality", 26, t["muted"]))
+    parts.append(txt(64, 1574, "with my design experience!", 26, t["muted"]))
+    parts.append(f'<rect x="64" y="1602" width="360" height="62" rx="31" fill="{t["cta_bg"]}"/>')
+    parts.append(txt(92, 1640, "Send a message now!", 24, t["cta_fg"], 600))
+    parts.append(
+        f'<path d="M356 1632h18m-7-7 7 7-7 7" fill="none" stroke="{t["cta_fg"]}" '
+        'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+    )
+
+    # ---- grain ----------------------------------------------------------
+    parts.append(
+        f'<rect width="{MW}" height="{MH}" rx="28" filter="url(#grain)" opacity="'
+        f'{0.035 if theme_name == "dark" else 0.02}"/>'
+    )
+    parts.append("</svg>")
+    return "\n".join(parts)
+
+
 def main() -> None:
     dark = build("dark")
     light = build("light")
     OUT_DARK.write_text(dark, encoding="utf-8")
     OUT_LIGHT.write_text(light, encoding="utf-8")
-    for path in (OUT_DARK, OUT_LIGHT):
+    OUT_MOBILE_DARK.write_text(build_mobile("dark"), encoding="utf-8")
+    OUT_MOBILE_LIGHT.write_text(build_mobile("light"), encoding="utf-8")
+    for path in (OUT_DARK, OUT_LIGHT, OUT_MOBILE_DARK, OUT_MOBILE_LIGHT):
         print(f"Wrote {path.relative_to(ROOT)} ({path.stat().st_size / 1024:.1f} KB)")
 
 

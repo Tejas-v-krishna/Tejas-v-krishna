@@ -73,7 +73,8 @@ python -m pip install pillow
 ```
 
 and ffmpeg on PATH.
-- Profile card: `scripts/build_profile_card.py` writes `assets/profile-card-dark.svg` and `assets/profile-card-light.svg` from `assets/avatar.png`. Edit the copy or layout there, not in the SVG files.
+- Profile card: `scripts/build_profile_card.py` writes four SVGs from `assets/avatar.png` — `profile-card-dark.svg` / `profile-card-light.svg` (wide, desktop) and `profile-card-mobile-dark.svg` / `profile-card-mobile-light.svg` (portrait, phones). The README swaps them with `<source media>` queries. Edit the copy or layout there, not in the SVG files.
+- Card link: the card is wrapped in an `<a>`; change its `href` in `README.md` (currently `mailto:tejaskrishna2018@gmail.com`).
 - Stats card layout: `scripts/update_stats.py` (`render_stats`).
 - Activity graph layout: `scripts/update_stats.py` (`render_activity`).
 
