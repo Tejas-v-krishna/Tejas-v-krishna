@@ -74,7 +74,8 @@ python -m pip install pillow
 
 and ffmpeg on PATH.
 - Profile card: `scripts/build_profile_card.py` writes four SVGs from `assets/avatar.png` — `profile-card-dark.svg` / `profile-card-light.svg` (wide, desktop) and `profile-card-mobile-dark.svg` / `profile-card-mobile-light.svg` (portrait, phones). The README swaps them with `<source media>` queries. Edit the copy or layout there, not in the SVG files.
-- Card link: the card is wrapped in an `<a>`; change its `href` in `README.md` (currently `mailto:tejaskrishna2018@gmail.com`).
+- Card animations: `ANIMATION_CSS` in `scripts/build_profile_card.py` — services pills float, the orbit ring rotates, social tiles bob, work cards levitate and the CTA glows with a nudging arrow. They run inside GitHub's `<img>` embed; true hover states are impossible there (images get no pointer events), so the motion is ambient. `prefers-reduced-motion` disables all of it.
+- Card link: the card is wrapped in an `<a>`; change its `href` in `README.md` (currently `mailto:tejaskrishna2018@gmail.com`). Individual tiles inside the image cannot link anywhere — only the whole card can.
 - Stats card layout: `scripts/update_stats.py` (`render_stats` wide, `render_stats_mobile` portrait). The README swaps them with `<source media="(max-width: 760px)">`.
 - Activity graph layout: `scripts/update_stats.py` (`render_activity` wide, `render_activity_mobile` portrait).
 

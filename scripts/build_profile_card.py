@@ -40,6 +40,27 @@ OUT_MOBILE_LIGHT = ASSETS / "profile-card-mobile-light.svg"
 
 W, H = 900, 1010
 MW, MH = 720, 1712
+
+# Looping animations. They run inside <img>-embedded SVGs, so they animate on
+# the profile page; hover states do not (images get no pointer events), so the
+# motion is ambient instead of interactive. Reduced-motion users get none.
+ANIMATION_CSS = """
+  .tile-wave { animation: tile-wave 5s ease-in-out infinite; }
+  .work-float { animation: work-float 6s ease-in-out infinite; }
+  .pill-float { animation: pill-float 5s ease-in-out infinite; }
+  .cta-glow { animation: cta-glow 2.6s ease-in-out infinite; }
+  .cta-arrow { animation: cta-arrow 1.9s ease-in-out infinite; }
+  .orbit { animation: orbit 42s linear infinite; transform-origin: 726px 540px; }
+  @keyframes tile-wave { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  @keyframes work-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @keyframes pill-float { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-7px) scale(1.03); } }
+  @keyframes cta-glow { 0%,100% { opacity: .08; } 50% { opacity: .38; } }
+  @keyframes cta-arrow { 0%,100% { transform: translateX(0); } 55% { transform: translateX(7px); } }
+  @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .tile-wave, .work-float, .pill-float, .cta-glow, .cta-arrow, .orbit { animation: none; }
+  }
+"""
 FONT = (
     "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, "
     "Helvetica, Arial, sans-serif"
@@ -210,9 +231,10 @@ def panel(x: float, y: float, w: float, h: float, r: float = 24) -> str:
     )
 
 
-def pill(cx: float, cy: float, w: float, label: str, rot: float, t: dict) -> str:
+def pill(cx: float, cy: float, w: float, label: str, rot: float, t: dict, delay: float = 0.0) -> str:
     return (
         f'<g transform="translate({cx} {cy}) rotate({rot})">'
+        f'<g class="pill-float" style="animation-delay:{delay:.2f}s">'
         f'<rect x="{-w / 2:.1f}" y="-13" width="{w}" height="26" rx="13" '
         'fill="url(#glass)" stroke="url(#edge)" stroke-width="1"/>'
         + txt(
@@ -225,7 +247,7 @@ def pill(cx: float, cy: float, w: float, label: str, rot: float, t: dict) -> str
             "middle",
             0.1,
         ).replace("<text ", '<text dominant-baseline="middle" ')
-        + "</g>"
+        + "</g></g>"
     )
 
 
@@ -321,9 +343,11 @@ def work_card(
     accent: str,
     body: str,
     clip_id: str,
+    delay: float = 0.0,
 ) -> str:
     return f"""
     <g transform="translate({x} {y})">
+      <g class="work-float" style="animation-delay:{delay:.2f}s">
       <g transform="rotate({angle} 120 90)" filter="url(#lift)">
         <rect width="240" height="180" rx="14" fill="{t['thumb']}" stroke="{t['thumb_edge']}" stroke-width="1"/>
         <g clip-path="url(#{clip_id})">{body}</g>
@@ -332,6 +356,7 @@ def work_card(
         {txt(30, 168, label, 11, t["ink"], 500)}
         <path d="M213 159l6-6m0 0h-5m5 0v5" fill="none" stroke="{t['faint']}" stroke-width="1.5"
           stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
       </g>
     </g>
     """
@@ -383,6 +408,7 @@ def build(theme_name: str) -> str:
     <clipPath id="clipA"><rect width="240" height="148" rx="14"/></clipPath>
     <clipPath id="clipB"><rect width="240" height="148" rx="14"/></clipPath>
     <clipPath id="clipC"><rect width="240" height="148" rx="14"/></clipPath>
+  <style>{ANIMATION_CSS}  </style>
   </defs>
 """
     )
@@ -414,7 +440,11 @@ def build(theme_name: str) -> str:
     for i, name in enumerate(SOCIALS):
         x = 40 + i * (tile_w + 16)
         parts.append(panel(x, 208, tile_w, 118, 20))
-        parts.append(icon(name, x + tile_w / 2 - 17, 257, 34, t["icon"]))
+        parts.append(
+            f'<g class="tile-wave" style="animation-delay:{-0.9 * i:.2f}s">'
+            + icon(name, x + tile_w / 2 - 17, 257, 34, t["icon"])
+            + "</g>"
+        )
 
     # ---- recent works ---------------------------------------------------
     parts.append(panel(40, 344, 536, 362))
@@ -423,16 +453,18 @@ def build(theme_name: str) -> str:
         f'<path d="M528 392l12-12m0 0h-9m9 0v9" fill="none" stroke="{t["muted"]}" '
         'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'
     )
-    parts.append(work_card(t, 64, 478, -10, "Sawn", t["accent_c"], work_sawn(t), "clipA"))
-    parts.append(work_card(t, 190, 462, 2, "Flowdesk", t["accent_b"], work_flowdesk(t), "clipB"))
-    parts.append(work_card(t, 310, 486, 11, "Figma DS", t["accent_a"], work_figma(t), "clipC"))
+    parts.append(work_card(t, 64, 478, -10, "Sawn", t["accent_c"], work_sawn(t), "clipA", -1.1))
+    parts.append(work_card(t, 190, 462, 2, "Flowdesk", t["accent_b"], work_flowdesk(t), "clipB", -3.2))
+    parts.append(work_card(t, 310, 486, 11, "Figma DS", t["accent_a"], work_figma(t), "clipC", -5.3))
 
     # ---- services -------------------------------------------------------
     parts.append(panel(592, 344, 268, 362))
     parts.append(txt(628, 390, "Services", 15, t["muted"], 500, spacing="0.2"))
     parts.append(
-        f'<ellipse cx="726" cy="540" rx="72" ry="76" fill="none" stroke="{t["faint"]}" '
-        'stroke-opacity=".35" stroke-width="1" stroke-dasharray="2 6" transform="rotate(-12 726 540)"/>'
+        '<g transform="rotate(-12 726 540)">'
+        f'<ellipse class="orbit" cx="726" cy="540" rx="72" ry="76" fill="none" '
+        f'stroke="{t["faint"]}" stroke-opacity=".35" stroke-width="1" stroke-dasharray="2 6"/>'
+        "</g>"
     )
     services = [
         (712, 470, 88, "AI Products", -7),
@@ -442,8 +474,8 @@ def build(theme_name: str) -> str:
         (678, 566, 96, "Figma Plugins", -6),
         (726, 610, 90, "Performance", 4),
     ]
-    for cx, cy, w, label, rot in services:
-        parts.append(pill(cx, cy, w, label, rot, t))
+    for i, (cx, cy, w, label, rot) in enumerate(services):
+        parts.append(pill(cx, cy, w, label, rot, t, -0.8 * i))
 
     # ---- tools ----------------------------------------------------------
     parts.append(panel(40, 724, 296, 246))
@@ -462,12 +494,16 @@ def build(theme_name: str) -> str:
     parts.append(txt(388, 826, "Let’s turn your idea into reality", 14, t["muted"]))
     parts.append(txt(388, 848, "with my design experience!", 14, t["muted"]))
     parts.append(
+        f'<rect x="384" y="880" width="220" height="54" rx="27" fill="{t["accent_a"]}" '
+        'opacity="0.08" class="cta-glow"/>'
+    )
+    parts.append(
         f'<rect x="388" y="884" width="212" height="46" rx="23" fill="{t["cta_bg"]}"/>'
     )
     parts.append(txt(406, 912, "Send a message now!", 12.5, t["cta_fg"], 600))
     parts.append(
-        f'<path d="M552 907h14m-5-5 5 5-5 5" fill="none" stroke="{t["cta_fg"]}" '
-        'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>'
+        f'<g class="cta-arrow"><path d="M552 907h14m-5-5 5 5-5 5" fill="none" stroke="{t["cta_fg"]}" '
+        'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g>'
     )
 
     # ---- grain ----------------------------------------------------------
@@ -479,17 +515,18 @@ def build(theme_name: str) -> str:
     return "\n".join(parts)
 
 
-def pill_m(cx: float, cy: float, w: float, label: str, rot: float, t: dict) -> str:
+def pill_m(cx: float, cy: float, w: float, label: str, rot: float, t: dict, delay: float = 0.0) -> str:
     """A services pill sized for the portrait card (larger than the wide one)."""
     h = 46
     return (
         f'<g transform="translate({cx} {cy}) rotate({rot})">'
+        f'<g class="pill-float" style="animation-delay:{delay:.2f}s">'
         f'<rect x="{-w / 2:.1f}" y="{-h / 2}" width="{w}" height="{h}" rx="{h / 2}" '
         'fill="url(#glass)" stroke="url(#edge)" stroke-width="1"/>'
         + txt(0, 0, label, 22, t["ink"], 500, "middle", 0.1).replace(
             "<text ", '<text dominant-baseline="middle" '
         )
-        + "</g>"
+        + "</g></g>"
     )
 
 
@@ -536,6 +573,7 @@ def build_mobile(theme_name: str) -> str:
     <clipPath id="clipA"><rect width="240" height="148" rx="14"/></clipPath>
     <clipPath id="clipB"><rect width="240" height="148" rx="14"/></clipPath>
     <clipPath id="clipC"><rect width="240" height="148" rx="14"/></clipPath>
+  <style>{ANIMATION_CSS}  </style>
   </defs>
 """
     )
@@ -565,7 +603,11 @@ def build_mobile(theme_name: str) -> str:
     for i, name in enumerate(SOCIALS):
         x = 32 + i * (tile_w + 14)
         parts.append(panel(x, 228, tile_w, 112, 20))
-        parts.append(icon(name, x + tile_w / 2 - 19, 265, 38, t["icon"]))
+        parts.append(
+            f'<g class="tile-wave" style="animation-delay:{-0.9 * i:.2f}s">'
+            + icon(name, x + tile_w / 2 - 19, 265, 38, t["icon"])
+            + "</g>"
+        )
 
     # ---- recent works (one row per project) -----------------------------
     parts.append(panel(32, 368, 656, 486))
@@ -600,15 +642,15 @@ def build_mobile(theme_name: str) -> str:
     # ---- services -------------------------------------------------------
     parts.append(panel(32, 886, 656, 246))
     parts.append(txt(64, 936, "Services", 24, t["muted"], 500, spacing="0.2"))
-    for cx, cy, w, label, rot in [
+    for i, (cx, cy, w, label, rot) in enumerate([
         (147, 990, 150, "AI Products", -5),
         (347, 990, 210, "Design Systems", 4),
         (557, 990, 175, "UI/UX Design", -4),
         (165, 1062, 150, "Full-Stack", 4),
         (352, 1062, 185, "Figma Plugins", -4),
         (547, 1062, 165, "Performance", 3),
-    ]:
-        parts.append(pill_m(cx, cy, w, label, rot, t))
+    ]):
+        parts.append(pill_m(cx, cy, w, label, rot, t, -0.8 * i))
 
     # ---- tools ----------------------------------------------------------
     parts.append(panel(32, 1168, 656, 214))
@@ -625,11 +667,15 @@ def build_mobile(theme_name: str) -> str:
     parts.append(txt(64, 1498, "Let’s collab!", 44, t["ink"], 600, spacing="-0.5"))
     parts.append(txt(64, 1540, "Let’s turn your idea into reality", 26, t["muted"]))
     parts.append(txt(64, 1574, "with my design experience!", 26, t["muted"]))
+    parts.append(
+        f'<rect x="58" y="1596" width="372" height="74" rx="37" fill="{t["accent_a"]}" '
+        'opacity="0.08" class="cta-glow"/>'
+    )
     parts.append(f'<rect x="64" y="1602" width="360" height="62" rx="31" fill="{t["cta_bg"]}"/>')
     parts.append(txt(92, 1640, "Send a message now!", 24, t["cta_fg"], 600))
     parts.append(
-        f'<path d="M356 1632h18m-7-7 7 7-7 7" fill="none" stroke="{t["cta_fg"]}" '
-        'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+        f'<g class="cta-arrow"><path d="M356 1632h18m-7-7 7 7-7 7" fill="none" stroke="{t["cta_fg"]}" '
+        'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>'
     )
 
     # ---- grain ----------------------------------------------------------
