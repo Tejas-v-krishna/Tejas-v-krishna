@@ -32,8 +32,31 @@ I build with **React, TypeScript, Node.js, and MongoDB**, and I'm increasingly d
 
 ## Stack
 
+<p align="center">
+  <img src="https://cdn.simpleicons.org/react/7d8590" height="28" alt="React" />
+  <img src="https://cdn.simpleicons.org/nextdotjs/7d8590" height="28" alt="Next.js" />
+  <img src="https://cdn.simpleicons.org/typescript/7d8590" height="28" alt="TypeScript" />
+  <img src="https://cdn.simpleicons.org/javascript/7d8590" height="28" alt="JavaScript" />
+  <img src="https://cdn.simpleicons.org/tailwindcss/7d8590" height="28" alt="Tailwind CSS" />
+  <img src="https://cdn.simpleicons.org/html5/7d8590" height="28" alt="HTML" />
+  <img src="https://cdn.simpleicons.org/css/7d8590" height="28" alt="CSS" />
+  <img src="https://cdn.simpleicons.org/nodedotjs/7d8590" height="28" alt="Node.js" />
+  <img src="https://cdn.simpleicons.org/express/7d8590" height="28" alt="Express" />
+  <img src="https://cdn.simpleicons.org/python/7d8590" height="28" alt="Python" />
+  <img src="https://cdn.simpleicons.org/postgresql/7d8590" height="28" alt="PostgreSQL" />
+  <img src="https://cdn.simpleicons.org/mongodb/7d8590" height="28" alt="MongoDB" />
+  <img src="https://cdn.simpleicons.org/prisma/7d8590" height="28" alt="Prisma" />
+  <img src="https://cdn.simpleicons.org/figma/7d8590" height="28" alt="Figma" />
+  <img src="https://cdn.simpleicons.org/git/7d8590" height="28" alt="Git" />
+  <img src="https://cdn.simpleicons.org/github/7d8590" height="28" alt="GitHub" />
+  <img src="https://cdn.simpleicons.org/docker/7d8590" height="28" alt="Docker" />
+  <img src="https://api.iconify.design/simple-icons/amazonwebservices.svg?color=%237d8590" height="28" alt="AWS" />
+  <img src="https://cdn.simpleicons.org/vercel/7d8590" height="28" alt="Vercel" />
+  <img src="https://cdn.simpleicons.org/firebase/7d8590" height="28" alt="Firebase" />
+</p>
+
 - **Frontend** — React · Next.js · TypeScript · JavaScript · Tailwind CSS · HTML · CSS
-- **Backend** — Node.js · Express · PostgreSQL · MongoDB · Prisma
+- **Backend** — Node.js · Express · Python · PostgreSQL · MongoDB · Prisma
 - **Design** — Figma · Design systems · Prototyping · Accessibility
 - **Tooling** — Git · GitHub · Docker · AWS · Vercel · Firebase
 

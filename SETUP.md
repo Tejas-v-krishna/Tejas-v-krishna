@@ -65,7 +65,7 @@ The README cannot set these through the API, so do them in GitHub's UI:
 
 - Links and email: `README.md`.
 - Bio, about copy, and featured projects: `README.md`.
-- Tech stack: the four groups are plain markdown in `README.md` — no icon service to maintain.
+- Tech stack: the logo row is a list of Simple Icons CDN URLs in `README.md` (`https://cdn.simpleicons.org/<slug>/7d8590`), with AWS served by Iconify. The four groups below it are plain markdown.
 - Hero images: `assets/source/eye-blink.mp4`, `scripts/build_assets.py` (still) and `scripts/build_hero_gif.py` (animated). Both scripts need ffmpeg and Pillow:
 
 ```powershell
