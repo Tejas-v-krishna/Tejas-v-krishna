@@ -32,7 +32,7 @@ git push -u origin main
 
 ## 3. Let the stats update themselves
 
-The workflow in `.github/workflows/profile-assets.yml` refreshes `assets/stats.svg` and `assets/activity.svg` every day.
+The workflow in `.github/workflows/profile-assets.yml` refreshes `assets/stats.svg`, `assets/stats-mobile.svg`, `assets/activity.svg` and `assets/activity-mobile.svg` every day.
 
 1. Open the repository on GitHub.
 2. Go to **Settings → Actions → General → Workflow permissions**.
@@ -75,8 +75,8 @@ python -m pip install pillow
 and ffmpeg on PATH.
 - Profile card: `scripts/build_profile_card.py` writes four SVGs from `assets/avatar.png` — `profile-card-dark.svg` / `profile-card-light.svg` (wide, desktop) and `profile-card-mobile-dark.svg` / `profile-card-mobile-light.svg` (portrait, phones). The README swaps them with `<source media>` queries. Edit the copy or layout there, not in the SVG files.
 - Card link: the card is wrapped in an `<a>`; change its `href` in `README.md` (currently `mailto:tejaskrishna2018@gmail.com`).
-- Stats card layout: `scripts/update_stats.py` (`render_stats`).
-- Activity graph layout: `scripts/update_stats.py` (`render_activity`).
+- Stats card layout: `scripts/update_stats.py` (`render_stats` wide, `render_stats_mobile` portrait). The README swaps them with `<source media="(max-width: 760px)">`.
+- Activity graph layout: `scripts/update_stats.py` (`render_activity` wide, `render_activity_mobile` portrait).
 
 Rebuild the artwork after editing `build_assets.py`, `build_hero_gif.py` or `build_profile_card.py`:
 

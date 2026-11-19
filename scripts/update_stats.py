@@ -209,6 +209,56 @@ def render_stats(login: str, total: int, created: dt.date, streak: dict) -> str:
 """
 
 
+def activity_window(days: list[tuple[dt.date, int]]) -> tuple[dt.date, dt.date, list]:
+    """The last 365 days, ending on the latest known day."""
+    end = days[-1][0]
+    start = end - dt.timedelta(days=364)
+    window = [(d, c) for d, c in days if start <= d <= end]
+    if len(window) < 2:
+        window = days[-365:]
+    return start, end, window
+
+
+def render_stats_mobile(login: str, total: int, created: dt.date, streak: dict) -> str:
+    """Stacked portrait stats card; the wide one is unreadable at ~308px."""
+    total_sub = f"{created.strftime('%b %Y')} – Present"
+    current_sub = date_range(streak["current_start"], streak["current_end"])
+    best_sub = date_range(streak["best_start"], streak["best_end"])
+
+    width, height = 720, 600
+    blocks = [
+        (f"{total:,}", "Total Contributions", total_sub),
+        (f"{streak['current']}", "Current Streak", current_sub),
+        (f"{streak['best']}", "Longest Streak", best_sub),
+    ]
+    rows = []
+    for index, (value, label, sub) in enumerate(blocks):
+        y = 138 + index * 168
+        if index:
+            rows.append(f'<line x1="48" y1="{y - 118}" x2="672" y2="{y - 118}" stroke="{GRID}"/>')
+        rows.append(
+            f'<text x="48" y="{y}" fill="{TEXT}" font-family="{FONT}" '
+            f'font-size="58" font-weight="700">{value}</text>'
+        )
+        rows.append(
+            f'<text x="48" y="{y + 36}" fill="{TEXT}" font-family="{FONT}" '
+            f'font-size="26" font-weight="600">{label}</text>'
+        )
+        rows.append(
+            f'<text x="48" y="{y + 64}" fill="{MUTED}" font-family="{FONT}" '
+            f'font-size="20">{sub}</text>'
+        )
+
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="GitHub stats for {html.escape(login)}">
+  <rect x="1" y="1" width="{width - 2}" height="{height - 2}" rx="14" fill="{BG}" stroke="{BORDER}"/>
+  <circle cx="27" cy="40" r="3" fill="{BLUE}"/>
+  <text x="38" y="47" fill="{MUTED}" font-family="{FONT}" font-size="22" letter-spacing="2.2">GITHUB STATS</text>
+  {''.join(rows)}
+  <text x="672" y="572" fill="{MUTED}" font-size="18" text-anchor="end" font-family="{FONT}">updated {dt.date.today().isoformat()}</text>
+</svg>
+"""
+
+
 def month_starts(start: dt.date, end: dt.date) -> list[tuple[dt.date, str]]:
     result = []
     cursor = dt.date(start.year, start.month, 1)
@@ -222,12 +272,7 @@ def month_starts(start: dt.date, end: dt.date) -> list[tuple[dt.date, str]]:
 
 
 def render_activity(login: str, days: list[tuple[dt.date, int]]) -> str:
-    # Last 365 days, ending today.
-    end = days[-1][0]
-    start = end - dt.timedelta(days=364)
-    window = [(d, c) for d, c in days if start <= d <= end]
-    if len(window) < 2:
-        window = days[-365:]
+    start, end, window = activity_window(days)
 
     width, height = 900, 300
     left, right = 58, 866
@@ -284,6 +329,68 @@ def render_activity(login: str, days: list[tuple[dt.date, int]]) -> str:
 """
 
 
+def render_activity_mobile(login: str, days: list[tuple[dt.date, int]]) -> str:
+    """Tall portrait graph with fewer, larger labels for phone width."""
+    start, end, window = activity_window(days)
+
+    width, height = 720, 540
+    left, right = 80, 688
+    top, bottom = 118, 430
+    chart_w, chart_h = right - left, bottom - top
+    max_count = max(c for _, c in window) or 1
+    y_max = max(10, ((max_count + 9) // 10) * 10)
+
+    def x_at(index: int) -> float:
+        return left + (index / (len(window) - 1)) * chart_w
+
+    def y_at(count: int) -> float:
+        return bottom - (count / y_max) * chart_h
+
+    points = [(x_at(i), y_at(c)) for i, (_, c) in enumerate(window)]
+    line = " ".join(f"{x:.2f},{y:.2f}" for x, y in points)
+    area = f"{left:.2f},{bottom:.2f} " + line + f" {right:.2f},{bottom:.2f}"
+
+    grid = []
+    for tick in (0, y_max // 2, y_max):
+        y = y_at(tick)
+        grid.append(f'<line x1="{left}" y1="{y:.1f}" x2="{right}" y2="{y:.1f}" stroke="{GRID}" stroke-width="1"/>')
+        grid.append(f'<text x="{left - 14}" y="{y + 6:.1f}" fill="{MUTED}" font-size="20" text-anchor="end" font-family="{FONT}">{tick}</text>')
+
+    months = []
+    for order, (date, label) in enumerate(month_starts(start, end)):
+        index = next((i for i, (d, _) in enumerate(window) if d >= date), None)
+        if index is None:
+            continue
+        if order % 2:  # every other month; all twelve is too tight at 20px
+            continue
+        x = x_at(index)
+        months.append(f'<line x1="{x:.1f}" y1="{top}" x2="{x:.1f}" y2="{bottom}" stroke="{GRID}" stroke-width="1" stroke-dasharray="2 5"/>')
+        months.append(f'<text x="{x:.1f}" y="{bottom + 34}" fill="{MUTED}" font-size="20" text-anchor="middle" font-family="{FONT}">{label}</text>')
+
+    total = sum(c for _, c in window)
+    last_x, last_y = points[-1]
+    range_text = f"{start.strftime('%b %d, %Y')} – {end.strftime('%b %d, %Y')}".replace(" 0", " ")
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="Contribution activity for {html.escape(login)}">
+  <defs>
+    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="{BLUE}" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="{BLUE}" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect x="1" y="1" width="{width - 2}" height="{height - 2}" rx="14" fill="{BG}" stroke="{BORDER}"/>
+  <text x="34" y="46" fill="{TEXT}" font-family="{FONT}" font-size="28" font-weight="600">Contribution activity</text>
+  <text x="686" y="46" fill="{MUTED}" font-family="{FONT}" font-size="18" text-anchor="end">Last 12 months</text>
+  {''.join(grid)}
+  {''.join(months)}
+  <polygon points="{area}" fill="url(#area)"/>
+  <polyline points="{line}" fill="none" stroke="{BLUE}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="{last_x:.2f}" cy="{last_y:.2f}" r="4.5" fill="{BG}" stroke="{BLUE}" stroke-width="2.6"/>
+  <text x="686" y="500" fill="{MUTED}" font-family="{FONT}" font-size="18" text-anchor="end">{total:,} contributions</text>
+  <text x="34" y="500" fill="{MUTED}" font-family="{FONT}" font-size="18">{range_text}</text>
+</svg>
+"""
+
+
 def main() -> None:
     token = token_from_env_or_gh()
     login = login_from_env_or_gh()
@@ -294,8 +401,15 @@ def main() -> None:
     (ASSETS / "stats.svg").write_text(
         render_stats(login, user["total"], user["created"], streak), encoding="utf-8"
     )
+    (ASSETS / "stats-mobile.svg").write_text(
+        render_stats_mobile(login, user["total"], user["created"], streak), encoding="utf-8"
+    )
     (ASSETS / "activity.svg").write_text(render_activity(login, user["days"]), encoding="utf-8")
-    print(f"Wrote assets/stats.svg and assets/activity.svg for {login}")
+    (ASSETS / "activity-mobile.svg").write_text(
+        render_activity_mobile(login, user["days"]), encoding="utf-8"
+    )
+    print("Wrote assets/stats.svg, assets/stats-mobile.svg, assets/activity.svg and")
+    print(f"assets/activity-mobile.svg for {login}")
     print(
         f"total={user['total']} current={streak['current']} "
         f"longest={streak['best']} days={len(user['days'])}"

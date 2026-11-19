@@ -73,7 +73,10 @@ My goal is simple: ship software that feels fast, looks intentional, and holds u
 
 <p align="center">
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=ts,js,react,nextjs,nodejs,express,mongodb,postgres,prisma,python,figma,tailwind,html,css,git,github,docker,aws,vercel,firebase&theme=dark&perline=10" alt="TypeScript, JavaScript, React, Next.js, Node.js, Express, MongoDB, PostgreSQL, Prisma, Python, Figma, Tailwind CSS, HTML, CSS, Git, GitHub, Docker, AWS, Vercel, Firebase" />
+    <picture>
+      <source media="(max-width: 760px)" srcset="https://skillicons.dev/icons?i=ts,js,react,nextjs,nodejs,express,mongodb,postgres,prisma,python,figma,tailwind,html,css,git,github,docker,aws,vercel,firebase&theme=dark&perline=6" />
+      <img src="https://skillicons.dev/icons?i=ts,js,react,nextjs,nodejs,express,mongodb,postgres,prisma,python,figma,tailwind,html,css,git,github,docker,aws,vercel,firebase&theme=dark&perline=10" alt="TypeScript, JavaScript, React, Next.js, Node.js, Express, MongoDB, PostgreSQL, Prisma, Python, Figma, Tailwind CSS, HTML, CSS, Git, GitHub, Docker, AWS, Vercel, Firebase" />
+    </picture>
   </a>
 </p>
 
@@ -82,7 +85,10 @@ My goal is simple: ship software that feels fast, looks intentional, and holds u
 ## 📊 GitHub Stats
 
 <div align="center">
-  <img src="assets/stats.svg" alt="GitHub contribution stats" width="100%" />
+  <picture>
+    <source media="(max-width: 760px)" srcset="assets/stats-mobile.svg" />
+    <img src="assets/stats.svg" alt="GitHub contribution stats" width="100%" />
+  </picture>
 </div>
 
 ---
@@ -90,7 +96,10 @@ My goal is simple: ship software that feels fast, looks intentional, and holds u
 ## 📈 Activity Graph
 
 <div align="center">
-  <img src="assets/activity.svg" alt="Contribution activity over the last 12 months" width="100%" />
+  <picture>
+    <source media="(max-width: 760px)" srcset="assets/activity-mobile.svg" />
+    <img src="assets/activity.svg" alt="Contribution activity over the last 12 months" width="100%" />
+  </picture>
 </div>
 
 ---
