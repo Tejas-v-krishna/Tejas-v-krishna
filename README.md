@@ -74,7 +74,7 @@ My goal is simple: ship software that feels fast, looks intentional, and holds u
 <p align="center">
   <a href="https://skillicons.dev">
     <picture>
-      <source media="(max-width: 760px)" srcset="https://skillicons.dev/icons?i=ts,js,react,nextjs,nodejs,express,mongodb,postgres,prisma,python,figma,tailwind,html,css,git,github,docker,aws,vercel,firebase&theme=dark&perline=6" />
+      <source media="(max-width: 760px)" srcset="https://skillicons.dev/icons?i=ts%2Cjs%2Creact%2Cnextjs%2Cnodejs%2Cexpress%2Cmongodb%2Cpostgres%2Cprisma%2Cpython%2Cfigma%2Ctailwind%2Chtml%2Ccss%2Cgit%2Cgithub%2Cdocker%2Caws%2Cvercel%2Cfirebase&theme=dark&perline=6" />
       <img src="https://skillicons.dev/icons?i=ts,js,react,nextjs,nodejs,express,mongodb,postgres,prisma,python,figma,tailwind,html,css,git,github,docker,aws,vercel,firebase&theme=dark&perline=10" alt="TypeScript, JavaScript, React, Next.js, Node.js, Express, MongoDB, PostgreSQL, Prisma, Python, Figma, Tailwind CSS, HTML, CSS, Git, GitHub, Docker, AWS, Vercel, Firebase" />
     </picture>
   </a>
