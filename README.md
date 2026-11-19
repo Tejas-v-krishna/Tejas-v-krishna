@@ -14,75 +14,30 @@
   </a>
 </div>
 
-<p align="center">
-  <sub>
-    <a href="mailto:tejaskrishna2018@gmail.com">Send a message</a> &nbsp;·&nbsp;
-    <a href="https://github.com/Tejas-v-krishna">GitHub</a> &nbsp;·&nbsp;
-    <a href="https://www.linkedin.com/in/tejas-v-krishna/">LinkedIn</a>
-  </sub>
-</p>
-
----
-
-## 🚀 About Me
-
-<table>
-<tr>
-<td width="62%" valign="top">
+## About
 
 I'm a **full-stack developer and UI/UX designer** pursuing B.Tech CSE at LPU. I care about the whole product: the data model, the API, the interaction, and the last 2 pixels of the interface.
 
-I build with **React, TypeScript, Node.js, and MongoDB**, and I'm increasingly drawn to **AI-powered tools, developer experience, and design systems**. I'm Google UX Design certified and performance-first by default.
+I build with **React, TypeScript, Node.js, and MongoDB**, and I'm increasingly drawn to AI-powered tools, developer experience, and design systems. I'm Google UX Design certified and performance-first by default.
 
-Right now I'm building:
+**Currently building**
 
 - **[Sawn](https://github.com/Tejas-v-krishna/usesawn)** — an AI-powered code editor and development environment.
 - **[Flowdesk](https://github.com/Tejas-v-krishna/flowdesk)** — a personal productivity OS for projects, tasks, notes, and analytics.
 - **[Figma Design System Plugin](https://github.com/Tejas-v-krishna/figma-design-system-plugin)** — turns one brand color into tokens, styles, and 50 components.
 
-My goal is simple: ship software that feels fast, looks intentional, and holds up when real people use it.
-
-</td>
-<td width="38%" align="center" valign="middle">
-  <img src="assets/astronaut.png" width="265" alt="Dithered astronaut floating in space" />
-</td>
-</tr>
-</table>
-
----
-
-## 🤝 Connect
-
 <p align="center">
-  <a href="https://github.com/Tejas-v-krishna" title="GitHub">
-    <img src="https://skillicons.dev/icons?i=github&theme=dark" height="46" alt="GitHub" />
-  </a>
-  &nbsp;&nbsp;
-  <a href="https://www.linkedin.com/in/tejas-v-krishna/" title="LinkedIn">
-    <img src="https://skillicons.dev/icons?i=linkedin&theme=dark" height="46" alt="LinkedIn" />
-  </a>
-  &nbsp;&nbsp;
-  <a href="mailto:tejaskrishna2018@gmail.com" title="Email">
-    <img src="https://skillicons.dev/icons?i=gmail&theme=dark" height="46" alt="Email" />
-  </a>
+  <img src="assets/astronaut.png" width="300" alt="Dithered astronaut floating in space" />
 </p>
 
----
+## Stack
 
-## 💻 Tech Stack
+- **Frontend** — React · Next.js · TypeScript · JavaScript · Tailwind CSS · HTML · CSS
+- **Backend** — Node.js · Express · PostgreSQL · MongoDB · Prisma
+- **Design** — Figma · Design systems · Prototyping · Accessibility
+- **Tooling** — Git · GitHub · Docker · AWS · Vercel · Firebase
 
-<p align="center">
-  <a href="https://skillicons.dev">
-    <picture>
-      <source media="(max-width: 760px)" srcset="https://skillicons.dev/icons?i=ts%2Cjs%2Creact%2Cnextjs%2Cnodejs%2Cexpress%2Cmongodb%2Cpostgres%2Cprisma%2Cpython%2Cfigma%2Ctailwind%2Chtml%2Ccss%2Cgit%2Cgithub%2Cdocker%2Caws%2Cvercel%2Cfirebase&theme=dark&perline=6" />
-      <img src="https://skillicons.dev/icons?i=ts,js,react,nextjs,nodejs,express,mongodb,postgres,prisma,python,figma,tailwind,html,css,git,github,docker,aws,vercel,firebase&theme=dark&perline=10" alt="TypeScript, JavaScript, React, Next.js, Node.js, Express, MongoDB, PostgreSQL, Prisma, Python, Figma, Tailwind CSS, HTML, CSS, Git, GitHub, Docker, AWS, Vercel, Firebase" />
-    </picture>
-  </a>
-</p>
-
----
-
-## 📊 GitHub Stats
+## GitHub stats
 
 <div align="center">
   <picture>
@@ -91,9 +46,7 @@ My goal is simple: ship software that feels fast, looks intentional, and holds u
   </picture>
 </div>
 
----
-
-## 📈 Activity Graph
+## Activity
 
 <div align="center">
   <picture>
@@ -102,8 +55,14 @@ My goal is simple: ship software that feels fast, looks intentional, and holds u
   </picture>
 </div>
 
----
+## Contact
 
 <p align="center">
-  <i>"Simplicity is prerequisite for reliability."</i> — Edsger W. Dijkstra
+  <a href="mailto:tejaskrishna2018@gmail.com">Email</a> &nbsp;·&nbsp;
+  <a href="https://github.com/Tejas-v-krishna">GitHub</a> &nbsp;·&nbsp;
+  <a href="https://www.linkedin.com/in/tejas-v-krishna/">LinkedIn</a>
 </p>
+
+> Simplicity is prerequisite for reliability.
+>
+> — Edsger W. Dijkstra

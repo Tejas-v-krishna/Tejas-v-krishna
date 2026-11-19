@@ -65,7 +65,7 @@ The README cannot set these through the API, so do them in GitHub's UI:
 
 - Links and email: `README.md`.
 - Bio, about copy, and featured projects: `README.md`.
-- Tech stack: change the `i=` list in the Skill Icons URL in `README.md`.
+- Tech stack: the four groups are plain markdown in `README.md` — no icon service to maintain.
 - Hero images: `assets/source/eye-blink.mp4`, `scripts/build_assets.py` (still) and `scripts/build_hero_gif.py` (animated). Both scripts need ffmpeg and Pillow:
 
 ```powershell
