@@ -1,4 +1,4 @@
-"""Build the profile-card SVGs used at the top of the README.
+﻿"""Build the profile-card SVGs used at the top of the README.
 
 The card is a single SVG because GitHub sanitises READMEs: no custom CSS, no
 layout, no hover states. Everything visual therefore lives in the image, while
@@ -29,6 +29,8 @@ import io
 from pathlib import Path
 
 from PIL import Image
+
+from svgfont import FAMILY, font_face
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
@@ -62,7 +64,7 @@ ANIMATION_CSS = """
   }
 """
 FONT = (
-    "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, "
+    f"{FAMILY}, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, "
     "Helvetica, Arial, sans-serif"
 )
 
@@ -373,7 +375,7 @@ def build(theme_name: str) -> str:
         f'role="img" aria-labelledby="cardTitle cardDesc">'
     )
     parts.append(
-        '<title id="cardTitle">Tejas — Full-Stack Developer and UI/UX Designer</title>'
+        '<title id="cardTitle">Tejas â€” Full-Stack Developer and UI/UX Designer</title>'
         '<desc id="cardDesc">Profile card with recent work, services, tools and contact details.</desc>'
     )
 
@@ -408,7 +410,7 @@ def build(theme_name: str) -> str:
     <clipPath id="clipA"><rect width="240" height="148" rx="14"/></clipPath>
     <clipPath id="clipB"><rect width="240" height="148" rx="14"/></clipPath>
     <clipPath id="clipC"><rect width="240" height="148" rx="14"/></clipPath>
-  <style>{ANIMATION_CSS}  </style>
+  <style>{font_face()}{ANIMATION_CSS}  </style>
   </defs>
 """
     )
@@ -420,7 +422,7 @@ def build(theme_name: str) -> str:
 
     # ---- header ---------------------------------------------------------
     parts.append(panel(40, 40, 630, 150))
-    parts.append(txt(76, 104, "Hey, I’m Tejas", 40, t["ink"], 600, spacing="-0.8"))
+    parts.append(txt(76, 104, "Hey, Iâ€™m Tejas", 40, t["ink"], 600, spacing="-0.8"))
     parts.append(
         txt(76, 138, "Full-Stack Developer &amp; UI/UX Designer", 16.5, t["muted"], 400, spacing="0.1")
     )
@@ -490,8 +492,8 @@ def build(theme_name: str) -> str:
 
     # ---- collab ---------------------------------------------------------
     parts.append(panel(352, 724, 508, 246))
-    parts.append(txt(388, 790, "Let’s collab!", 30, t["ink"], 600, spacing="-0.5"))
-    parts.append(txt(388, 826, "Let’s turn your idea into reality", 14, t["muted"]))
+    parts.append(txt(388, 790, "Letâ€™s collab!", 30, t["ink"], 600, spacing="-0.5"))
+    parts.append(txt(388, 826, "Letâ€™s turn your idea into reality", 14, t["muted"]))
     parts.append(txt(388, 848, "with my design experience!", 14, t["muted"]))
     parts.append(
         f'<rect x="384" y="880" width="220" height="54" rx="27" fill="{t["accent_a"]}" '
@@ -542,7 +544,7 @@ def build_mobile(theme_name: str) -> str:
         f'role="img" aria-labelledby="cardTitle cardDesc">'
     )
     parts.append(
-        '<title id="cardTitle">Tejas — Full-Stack Developer and UI/UX Designer</title>'
+        '<title id="cardTitle">Tejas â€” Full-Stack Developer and UI/UX Designer</title>'
         '<desc id="cardDesc">Profile card with recent work, services, tools and contact details.</desc>'
     )
 
@@ -573,7 +575,7 @@ def build_mobile(theme_name: str) -> str:
     <clipPath id="clipA"><rect width="240" height="148" rx="14"/></clipPath>
     <clipPath id="clipB"><rect width="240" height="148" rx="14"/></clipPath>
     <clipPath id="clipC"><rect width="240" height="148" rx="14"/></clipPath>
-  <style>{ANIMATION_CSS}  </style>
+  <style>{font_face()}{ANIMATION_CSS}  </style>
   </defs>
 """
     )
@@ -585,7 +587,7 @@ def build_mobile(theme_name: str) -> str:
 
     # ---- header ---------------------------------------------------------
     parts.append(panel(32, 32, 512, 168))
-    parts.append(txt(64, 108, "Hey, I’m Tejas", 46, t["ink"], 600, spacing="-0.8"))
+    parts.append(txt(64, 108, "Hey, Iâ€™m Tejas", 46, t["ink"], 600, spacing="-0.8"))
     parts.append(txt(64, 146, "Full-Stack Developer", 26, t["muted"]))
     parts.append(txt(64, 178, "&amp; UI/UX Designer", 26, t["muted"]))
     parts.append(panel(560, 32, 128, 168))
@@ -664,8 +666,8 @@ def build_mobile(theme_name: str) -> str:
 
     # ---- collab ---------------------------------------------------------
     parts.append(panel(32, 1418, 656, 262))
-    parts.append(txt(64, 1498, "Let’s collab!", 44, t["ink"], 600, spacing="-0.5"))
-    parts.append(txt(64, 1540, "Let’s turn your idea into reality", 26, t["muted"]))
+    parts.append(txt(64, 1498, "Letâ€™s collab!", 44, t["ink"], 600, spacing="-0.5"))
+    parts.append(txt(64, 1540, "Letâ€™s turn your idea into reality", 26, t["muted"]))
     parts.append(txt(64, 1574, "with my design experience!", 26, t["muted"]))
     parts.append(
         f'<rect x="58" y="1596" width="372" height="74" rx="37" fill="{t["accent_a"]}" '

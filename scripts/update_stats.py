@@ -18,6 +18,8 @@ import subprocess
 import urllib.request
 from pathlib import Path
 
+from svgfont import FAMILY, font_face
+
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets"
 
@@ -29,7 +31,7 @@ BLUE = "#58a6ff"
 GREEN = "#3fb950"
 GRID = "#21262d"
 
-FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
+FONT = f"{FAMILY},-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"
 
 
 def token_from_env_or_gh() -> str:
@@ -186,6 +188,7 @@ def render_stats(login: str, total: int, created: dt.date, streak: dict) -> str:
     best_sub = date_range(streak["best_start"], streak["best_end"])
 
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="900" height="205" viewBox="0 0 900 205" role="img" aria-label="GitHub stats for {html.escape(login)}">
+  <defs><style>{font_face()}</style></defs>
   <rect x="1" y="1" width="898" height="203" rx="14" fill="{BG}" stroke="{BORDER}"/>
   <text x="34" y="35" fill="{MUTED}" font-family="{FONT}" font-size="10" letter-spacing="2.2">GITHUB STATS</text>
   <circle cx="27" cy="31.5" r="2.5" fill="{BLUE}"/>
@@ -250,6 +253,7 @@ def render_stats_mobile(login: str, total: int, created: dt.date, streak: dict) 
         )
 
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="GitHub stats for {html.escape(login)}">
+  <defs><style>{font_face()}</style></defs>
   <rect x="1" y="1" width="{width - 2}" height="{height - 2}" rx="14" fill="{BG}" stroke="{BORDER}"/>
   <circle cx="27" cy="40" r="3" fill="{BLUE}"/>
   <text x="38" y="47" fill="{MUTED}" font-family="{FONT}" font-size="22" letter-spacing="2.2">GITHUB STATS</text>
@@ -310,6 +314,7 @@ def render_activity(login: str, days: list[tuple[dt.date, int]]) -> str:
     last_x, last_y = points[-1]
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="900" height="300" viewBox="0 0 900 300" role="img" aria-label="Contribution activity for {html.escape(login)}">
   <defs>
+    <style>{font_face()}</style>
     <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="{BLUE}" stop-opacity="0.28"/>
       <stop offset="100%" stop-color="{BLUE}" stop-opacity="0"/>
@@ -372,6 +377,7 @@ def render_activity_mobile(login: str, days: list[tuple[dt.date, int]]) -> str:
     range_text = f"{start.strftime('%b %d, %Y')} – {end.strftime('%b %d, %Y')}".replace(" 0", " ")
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-label="Contribution activity for {html.escape(login)}">
   <defs>
+    <style>{font_face()}</style>
     <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="{BLUE}" stop-opacity="0.28"/>
       <stop offset="100%" stop-color="{BLUE}" stop-opacity="0"/>
