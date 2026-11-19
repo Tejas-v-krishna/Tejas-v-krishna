@@ -50,7 +50,7 @@ I build with **React, TypeScript, Node.js, and MongoDB**, and I'm increasingly d
   <img src="https://cdn.simpleicons.org/git/7d8590" height="28" alt="Git" />
   <img src="https://cdn.simpleicons.org/github/7d8590" height="28" alt="GitHub" />
   <img src="https://cdn.simpleicons.org/docker/7d8590" height="28" alt="Docker" />
-  <img src="https://api.iconify.design/simple-icons/amazonwebservices.svg?color=%237d8590" height="28" alt="AWS" />
+  <img src="https://api.iconify.design/simple-icons/amazonwebservices.svg?color=%237d8590&amp;height=28" height="28" alt="AWS" />
   <img src="https://cdn.simpleicons.org/vercel/7d8590" height="28" alt="Vercel" />
   <img src="https://cdn.simpleicons.org/firebase/7d8590" height="28" alt="Firebase" />
 </p>
